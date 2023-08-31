@@ -7,7 +7,20 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class OrderService {
   constructor(private prisma: PrismaService) {}
   create(createOrderDto: CreateOrderDto) {
-    return this.prisma.order.create({ data: createOrderDto });
+    return this.prisma.order.create({
+      data: {
+        userId: createOrderDto.userId,
+        books: {
+          create: createOrderDto.bookIds.map((bookId) => ({
+            book: {
+              connect: {
+                id: bookId,
+              },
+            },
+          })),
+        },
+      },
+    });
   }
 
   findAll() {

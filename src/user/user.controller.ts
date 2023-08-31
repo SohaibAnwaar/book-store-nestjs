@@ -13,7 +13,9 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -21,7 +23,7 @@ export class UserController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
-      await this.userService.create(createUserDto);
+      return await this.userService.create(createUserDto);
     } catch (error) {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -42,7 +44,7 @@ export class UserController {
   @Get(':email')
   async findOne(@Param('email') email: string) {
     try {
-      await this.userService.findOne(email);
+      return await this.userService.findOne(email);
     } catch (error) {
       throw new NotFoundException({
         status: HttpStatus.NOT_FOUND,
@@ -54,7 +56,7 @@ export class UserController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
-      await this.userService.update(id, updateUserDto);
+      return await this.userService.update(id, updateUserDto);
     } catch (error) {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,

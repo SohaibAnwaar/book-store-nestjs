@@ -18,7 +18,6 @@ CREATE TABLE "Book" (
     "point" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "orderId" TEXT,
 
     CONSTRAINT "Book_pkey" PRIMARY KEY ("id")
 );
@@ -31,6 +30,14 @@ CREATE TABLE "Order" (
     "userId" TEXT,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "OrderOnBooks" (
+    "orderId" TEXT NOT NULL,
+    "bookId" TEXT NOT NULL,
+
+    CONSTRAINT "OrderOnBooks_pkey" PRIMARY KEY ("orderId","bookId")
 );
 
 -- CreateTable
@@ -49,16 +56,16 @@ CREATE TABLE "Tag" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Book_title_key" ON "Book"("title");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Tag_title_key" ON "Tag"("title");
 
 -- AddForeignKey
-ALTER TABLE "Book" ADD CONSTRAINT "Book_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "OrderOnBooks" ADD CONSTRAINT "OrderOnBooks_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrderOnBooks" ADD CONSTRAINT "OrderOnBooks_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Tag" ADD CONSTRAINT "Tag_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -13,7 +13,9 @@ import {
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Order')
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
@@ -21,7 +23,7 @@ export class OrderController {
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto) {
     try {
-      await this.orderService.create(createOrderDto);
+      return await this.orderService.create(createOrderDto);
     } catch (error) {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -48,7 +50,7 @@ export class OrderController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
-      await this.orderService.remove(id);
+      return await this.orderService.remove(id);
     } catch (error) {
       throw new NotFoundException({
         status: HttpStatus.NOT_FOUND,

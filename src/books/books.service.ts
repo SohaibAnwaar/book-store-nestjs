@@ -2,12 +2,26 @@ import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateOrderDto } from 'src/order/dto/create-order.dto';
 
 @Injectable()
 export class BooksService {
   constructor(private prisma: PrismaService) {}
   create(createBookDto: CreateBookDto) {
-    return this.prisma.book.create({ data: createBookDto });
+    return this.prisma.book.create({
+      data: {
+        title: createBookDto.title,
+        writer: createBookDto.writer,
+        coverImage: createBookDto.coverImage,
+        point: createBookDto.point,
+        tag: {
+          create: createBookDto.tag.map((singleTag) => ({ title: singleTag })),
+        },
+      },
+      include: {
+        tag: true,
+      },
+    });
   }
 
   findAll() {
