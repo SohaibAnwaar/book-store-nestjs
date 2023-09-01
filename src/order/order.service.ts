@@ -11,7 +11,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class OrderService {
   constructor(private prisma: PrismaService) {}
   async create(createOrderDto: CreateOrderDto) {
-    const { point } = await this.prisma.user.findUnique({
+    const userData = await this.prisma.user.findUniqueOrThrow({
       where: {
         id: createOrderDto.userId,
       },
@@ -20,10 +20,10 @@ export class OrderService {
       },
     });
     const orderTotalPoints = createOrderDto.totalPoints;
-    if (point < orderTotalPoints) {
+    if (userData.point < orderTotalPoints) {
       throw new Error('low balance');
     }
-    const remainingCredits = point - orderTotalPoints;
+    const remainingCredits = userData.point - orderTotalPoints;
     console.log(remainingCredits);
     await this.prisma.user.update({
       where: {
@@ -54,8 +54,11 @@ export class OrderService {
     return `This action returns a #${id} order`;
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  update(id: string, updateOrderDto: UpdateOrderDto) {
+    return this.prisma.order.update({
+      where: { id },
+      data: updateOrderDto,
+    });
   }
 
   remove(id: string) {

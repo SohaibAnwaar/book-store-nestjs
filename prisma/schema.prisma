@@ -35,6 +35,7 @@ model Book {
 model Order {
   id          String   @id @default(uuid())
   totalPoints Int
+  status      String   @default("submitted")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   User        User?    @relation(fields: [userId], references: [id])
