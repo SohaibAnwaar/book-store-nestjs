@@ -14,46 +14,39 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
+  point     Int      @default(100)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]
 }
 
 model Book {
-  id         String         @id @default(uuid())
+  id         String   @id @default(uuid())
   title      String
   writer     String
   coverImage String
   point      Int
   tag        Tag[]
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-  order      OrderOnBooks[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  orders     Order[]
 }
 
 model Order {
-  id        String         @id @default(uuid())
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  User      User?          @relation(fields: [userId], references: [id])
-  userId    String?
-  books     OrderOnBooks[]
-}
-
-model OrderOnBooks {
-  order   Order  @relation(fields: [orderId], references: [id])
-  orderId String // relation scalar field (used in the `@relation` attribute above)
-  book    Book   @relation(fields: [bookId], references: [id])
-  bookId  String // relation scalar field (used in the `@relation` attribute above)
-
-  @@id([orderId, bookId])
+  id          String   @id @default(uuid())
+  totalPoints Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String
+  books       Book[]
 }
 
 model Tag {
   id        String   @id @default(uuid())
   book      Book     @relation(fields: [bookId], references: [id])
   bookId    String
-  title     String   @unique
+  title     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orderId   String?

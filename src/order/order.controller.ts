@@ -9,6 +9,7 @@ import {
   NotFoundException,
   HttpStatus,
   UnprocessableEntityException,
+  Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -27,7 +28,7 @@ export class OrderController {
     } catch (error) {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
-        error: `There was an error while placing a new order: ${error.meta.cause}`,
+        error: `There was an error while placing a new order: ${error}`,
       });
     }
   }

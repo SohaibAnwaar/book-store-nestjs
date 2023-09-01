@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -6,17 +10,36 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class OrderService {
   constructor(private prisma: PrismaService) {}
-  create(createOrderDto: CreateOrderDto) {
+  async create(createOrderDto: CreateOrderDto) {
+    const { point } = await this.prisma.user.findUnique({
+      where: {
+        id: createOrderDto.userId,
+      },
+      select: {
+        point: true,
+      },
+    });
+    const orderTotalPoints = createOrderDto.totalPoints;
+    if (point < orderTotalPoints) {
+      throw new Error('low balance');
+    }
+    const remainingCredits = point - orderTotalPoints;
+    console.log(remainingCredits);
+    await this.prisma.user.update({
+      where: {
+        id: createOrderDto.userId,
+      },
+      data: {
+        point: remainingCredits,
+      },
+    });
     return this.prisma.order.create({
       data: {
         userId: createOrderDto.userId,
+        totalPoints: createOrderDto.totalPoints,
         books: {
-          create: createOrderDto.bookIds.map((bookId) => ({
-            book: {
-              connect: {
-                id: bookId,
-              },
-            },
+          connect: createOrderDto.bookIds.map((bookId) => ({
+            id: bookId,
           })),
         },
       },

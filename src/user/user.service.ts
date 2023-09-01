@@ -14,8 +14,8 @@ export class UserService {
   findAll() {
     return this.prisma.user.findMany({});
   }
-  findAllOrders(id: string) {
-    return this.prisma.order.findMany({ where: { userId: id } });
+  findAllOrders(id: string, skip: number, take: number) {
+    return this.prisma.order.findMany({ where: { userId: id }, skip, take });
   }
 
   findOne(email: string) {

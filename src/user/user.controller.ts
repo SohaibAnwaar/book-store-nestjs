@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import {
   Controller,
   Get,
@@ -9,6 +10,7 @@ import {
   UnprocessableEntityException,
   HttpStatus,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -38,8 +40,13 @@ export class UserController {
   }
 
   @Get('orders/:id')
-  findAllOrders(@Param('id') id: string) {
-    return this.userService.findAllOrders(id);
+  findAllOrders(
+    @Param('id') id: string,
+    @Query('skip') skip: number = 0,
+    @Query('take') take: number = 10,
+  ) {
+    take = take > 20 ? 20 : take;
+    return this.userService.findAllOrders(id, +skip, +take);
   }
   @Get(':email')
   async findOne(@Param('email') email: string) {

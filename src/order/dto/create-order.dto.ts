@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { CreateBookDto } from 'src/books/dto/create-book.dto';
 import {
   Entity,
@@ -11,10 +17,6 @@ import {
 
 @Entity()
 export class CreateOrderDto {
-  @PrimaryGeneratedColumn()
-  @IsString()
-  id: string;
-
   @Column()
   @ApiProperty()
   @IsString()
@@ -24,6 +26,7 @@ export class CreateOrderDto {
   @Column()
   @ApiProperty()
   @IsInt()
+  @IsNotEmpty()
   totalPoints: number;
 
   @Column()
@@ -37,8 +40,4 @@ export class CreateOrderDto {
   @IsString({ each: true })
   @IsOptional()
   bookIds?: string[];
-
-  @ManyToMany(() => CreateBookDto)
-  @JoinTable()
-  orders: CreateBookDto[];
 }

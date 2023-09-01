@@ -1,22 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Validate,
+} from 'class-validator';
+import { CreateOrderDto } from 'src/order/dto/create-order.dto';
+import { Entity, ManyToMany, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { CustomTags } from './CustomTags';
+const tags = ['fiction', 'non-fiction', 'science', 'essay'] as const;
+type Tags = typeof tags[number];
 @Entity()
 export class CreateBookDto {
   @PrimaryGeneratedColumn()
-  @IsString()
-  id: string;
-
-  @Column()
-  @ApiProperty()
-  @IsString()
-  title: string;
+  id: number;
 
   @Column()
   @ApiProperty()
   @IsString()
   writer: string;
+
+  @Column()
+  @ApiProperty()
+  @IsString()
+  title: string;
 
   @Column()
   @ApiProperty()
@@ -31,11 +39,6 @@ export class CreateBookDto {
   @ApiProperty()
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  tag: string[];
-
-  @Column()
-  @ApiProperty()
-  @IsOptional()
-  orderId?: string;
+  @Validate(CustomTags)
+  tag: Tags[];
 }
